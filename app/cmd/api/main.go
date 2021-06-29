@@ -15,7 +15,8 @@ import (
 func main() {
 	logger, _ := zap.NewProduction()
 
-	//nolint:errcheck Не может быть ошибки, т.к. работаем с stdout
+	// Не может быть ошибки, т.к. работаем с stdout
+	//nolint:errcheck
 	defer logger.Sync()
 
 	slogger := logger.Sugar()

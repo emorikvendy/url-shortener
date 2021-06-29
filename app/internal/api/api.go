@@ -2,14 +2,15 @@ package api
 
 import (
 	"context"
-	"github.com/emorikvendy/url-shortener/internal/controllers"
-	"github.com/emorikvendy/url-shortener/internal/resources"
 	"github.com/gorilla/mux"
 	"net"
 	"net/http"
 	_ "net/http/pprof"
 	"strconv"
 	"time"
+
+	"github.com/emorikvendy/url-shortener/internal/controllers"
+	"github.com/emorikvendy/url-shortener/internal/resources"
 
 	"go.uber.org/zap"
 )

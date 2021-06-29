@@ -3,6 +3,7 @@ package resources
 import (
 	"database/sql"
 	"fmt"
+
 	"github.com/emorikvendy/url-shortener/internal/sources/datatypes"
 	"github.com/emorikvendy/url-shortener/internal/sources/postgres"
 

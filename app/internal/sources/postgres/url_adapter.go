@@ -3,9 +3,11 @@ package postgres
 import (
 	"crypto/md5"
 	"fmt"
-	dt "github.com/emorikvendy/url-shortener/internal/datatypes"
-	"gopkg.in/reform.v1"
 	"strings"
+
+	dt "github.com/emorikvendy/url-shortener/internal/datatypes"
+
+	"gopkg.in/reform.v1"
 )
 
 const WHERE_ID = "WHERE id = $1"

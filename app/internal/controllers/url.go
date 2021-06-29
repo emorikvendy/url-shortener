@@ -3,13 +3,16 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	dt "github.com/emorikvendy/url-shortener/internal/datatypes"
-	sdt "github.com/emorikvendy/url-shortener/internal/sources/datatypes"
-	"github.com/gorilla/mux"
-	"go.uber.org/zap"
 	"net/http"
 	"net/url"
 	"strconv"
+
+	dt "github.com/emorikvendy/url-shortener/internal/datatypes"
+	sdt "github.com/emorikvendy/url-shortener/internal/sources/datatypes"
+
+	"github.com/gorilla/mux"
+
+	"go.uber.org/zap"
 )
 
 func addURL(logger *zap.SugaredLogger, adapter sdt.URLAdapter) func(http.ResponseWriter, *http.Request) {

@@ -1,8 +1,9 @@
 package postgres
 
 import (
-	"github.com/emorikvendy/url-shortener/internal/datatypes"
 	"time"
+
+	"github.com/emorikvendy/url-shortener/internal/datatypes"
 )
 
 //go:generate reform
