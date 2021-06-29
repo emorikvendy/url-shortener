@@ -49,10 +49,10 @@ func main() {
 	select {
 	case x := <-interrupt:
 		slogger.Infow("Received a signal.", "signal", x.String())
-	case err := <-restAPI.Notify():
-		slogger.Errorw("Received an error from the restAPI server.", "err", err)
-	case err := <-diag.Notify():
-		slogger.Errorw("Received an error from the diagnostics server.", "err", err)
+	case errRest := <-restAPI.Notify():
+		slogger.Errorw("Received an error from the restAPI server.", "err", errRest)
+	case errDiag := <-diag.Notify():
+		slogger.Errorw("Received an error from the diagnostics server.", "err", errDiag)
 	}
 
 	slogger.Info("Stopping the servers...")

@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+const WHERE_ID = "WHERE id = $1"
+
 type URLAdapter struct {
 	db      *reform.DB
 	hashLen int
@@ -39,7 +41,7 @@ func (adapter URLAdapter) GetByHash(hash string) (*dt.URL, error) {
 
 func (adapter URLAdapter) GetByID(id int64) (*dt.URL, error) {
 	args := make([]interface{}, 1)
-	tail := "WHERE id = $1"
+	tail := WHERE_ID
 	args[0] = id
 
 	sts, err := adapter.db.SelectAllFrom(urlModelTable, tail, args...)
@@ -56,7 +58,7 @@ func (adapter URLAdapter) GetByID(id int64) (*dt.URL, error) {
 
 func (adapter URLAdapter) getByID(id int64) (*urlModel, error) {
 	args := make([]interface{}, 1)
-	tail := "WHERE id = $1"
+	tail := WHERE_ID
 	args[0] = id
 
 	sts, err := adapter.db.SelectAllFrom(urlModelTable, tail, args...)
@@ -73,7 +75,7 @@ func (adapter URLAdapter) getByID(id int64) (*urlModel, error) {
 
 func (adapter URLAdapter) Delete(id int64) error {
 	args := make([]interface{}, 1)
-	tail := "WHERE id = $1"
+	tail := WHERE_ID
 	args[0] = id
 
 	_, err := adapter.db.DeleteFrom(urlModelTable, tail, args...)
