@@ -2,17 +2,18 @@ package api
 
 import (
 	"context"
-	"github.com/gorilla/mux"
 	"net"
 	"net/http"
 	_ "net/http/pprof"
 	"strconv"
 	"time"
 
-	"github.com/emorikvendy/url-shortener/internal/controllers"
-	"github.com/emorikvendy/url-shortener/internal/resources"
+	"github.com/gorilla/mux"
 
 	"go.uber.org/zap"
+
+	"github.com/emorikvendy/url-shortener/internal/controllers"
+	"github.com/emorikvendy/url-shortener/internal/resources"
 )
 
 // Api represents a api server.
