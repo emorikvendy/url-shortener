@@ -26,7 +26,8 @@ type Api struct {
 // New returns a new instance of the Api server.
 func New(logger *zap.SugaredLogger, port int, r resources.R) *Api {
 	router := mux.NewRouter()
-	controllers.AddURLRoutes(router, logger, r.Adapters.URL, r.Config.HashLen)
+	controllers.AddURLRoutes(router, logger, r.Adapters, r.Config.HashLen)
+	controllers.AddStatsRoutes(router, logger, r.Adapters)
 	return &Api{
 		server: http.Server{
 			Addr:    net.JoinHostPort("", strconv.Itoa(port)),

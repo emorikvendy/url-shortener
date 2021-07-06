@@ -10,14 +10,12 @@ import (
 	"gopkg.in/reform.v1"
 )
 
-const WHERE_ID = "WHERE id = $1"
-
 type URLAdapter struct {
 	db      *reform.DB
 	hashLen int
 }
 
-func New(db *reform.DB, hashLen int) *URLAdapter {
+func NewURLAdapter(db *reform.DB, hashLen int) *URLAdapter {
 	return &URLAdapter{
 		db:      db,
 		hashLen: hashLen,
@@ -42,34 +40,25 @@ func (adapter URLAdapter) GetByHash(hash string) (*dt.URL, error) {
 }
 
 func (adapter URLAdapter) GetByID(id int64) (*dt.URL, error) {
-	args := make([]interface{}, 1)
-	tail := WHERE_ID
-	args[0] = id
 
-	sts, err := adapter.db.SelectAllFrom(urlModelTable, tail, args...)
+	rec, err := adapter.db.FindByPrimaryKeyFrom(statsModelTable, id)
 	if err != nil {
-		return nil, err
-	} else if len(sts) == 0 {
-		return nil, nil
+		return nil, fmt.Errorf("couldn't find url by primary key: %w", err)
 	}
-	internal := sts[0].(*urlModel)
+
+	internal := rec.(*urlModel)
 
 	return internal.toBaseUrl(), nil
 
 }
 
 func (adapter URLAdapter) getByID(id int64) (*urlModel, error) {
-	args := make([]interface{}, 1)
-	tail := WHERE_ID
-	args[0] = id
-
-	sts, err := adapter.db.SelectAllFrom(urlModelTable, tail, args...)
+	rec, err := adapter.db.FindByPrimaryKeyFrom(statsModelTable, id)
 	if err != nil {
-		return nil, err
-	} else if len(sts) == 0 {
-		return nil, nil
+		return nil, fmt.Errorf("couldn't find url by primary key: %w", err)
 	}
-	internal := sts[0].(*urlModel)
+
+	internal := rec.(*urlModel)
 
 	return internal, nil
 
@@ -77,7 +66,7 @@ func (adapter URLAdapter) getByID(id int64) (*urlModel, error) {
 
 func (adapter URLAdapter) Delete(id int64) error {
 	args := make([]interface{}, 1)
-	tail := WHERE_ID
+	tail := "WHERE id = $1"
 	args[0] = id
 
 	_, err := adapter.db.DeleteFrom(urlModelTable, tail, args...)

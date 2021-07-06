@@ -71,75 +71,75 @@ var urlModelTable = &urlModelTableType{
 }
 
 // String returns a string representation of this struct or record.
-func (model urlModel) String() string {
+func (s urlModel) String() string {
 	res := make([]string, 6)
-	res[0] = "ID: " + reform.Inspect(model.ID, true)
-	res[1] = "Name: " + reform.Inspect(model.Name, true)
-	res[2] = "Link: " + reform.Inspect(model.Link, true)
-	res[3] = "Hash: " + reform.Inspect(model.Hash, true)
-	res[4] = "CreatedAt: " + reform.Inspect(model.CreatedAt, true)
-	res[5] = "UpdatedAt: " + reform.Inspect(model.UpdatedAt, true)
+	res[0] = "ID: " + reform.Inspect(s.ID, true)
+	res[1] = "Name: " + reform.Inspect(s.Name, true)
+	res[2] = "Link: " + reform.Inspect(s.Link, true)
+	res[3] = "Hash: " + reform.Inspect(s.Hash, true)
+	res[4] = "CreatedAt: " + reform.Inspect(s.CreatedAt, true)
+	res[5] = "UpdatedAt: " + reform.Inspect(s.UpdatedAt, true)
 	return strings.Join(res, ", ")
 }
 
 // Values returns a slice of struct or record field values.
 // Returned interface{} values are never untyped nils.
-func (model *urlModel) Values() []interface{} {
+func (s *urlModel) Values() []interface{} {
 	return []interface{}{
-		model.ID,
-		model.Name,
-		model.Link,
-		model.Hash,
-		model.CreatedAt,
-		model.UpdatedAt,
+		s.ID,
+		s.Name,
+		s.Link,
+		s.Hash,
+		s.CreatedAt,
+		s.UpdatedAt,
 	}
 }
 
 // Pointers returns a slice of pointers to struct or record fields.
 // Returned interface{} values are never untyped nils.
-func (model *urlModel) Pointers() []interface{} {
+func (s *urlModel) Pointers() []interface{} {
 	return []interface{}{
-		&model.ID,
-		&model.Name,
-		&model.Link,
-		&model.Hash,
-		&model.CreatedAt,
-		&model.UpdatedAt,
+		&s.ID,
+		&s.Name,
+		&s.Link,
+		&s.Hash,
+		&s.CreatedAt,
+		&s.UpdatedAt,
 	}
 }
 
 // View returns View object for that struct.
-func (model *urlModel) View() reform.View {
+func (s *urlModel) View() reform.View {
 	return urlModelTable
 }
 
 // Table returns Table object for that record.
-func (model *urlModel) Table() reform.Table {
+func (s *urlModel) Table() reform.Table {
 	return urlModelTable
 }
 
 // PKValue returns a value of primary key for that record.
 // Returned interface{} value is never untyped nil.
-func (model *urlModel) PKValue() interface{} {
-	return model.ID
+func (s *urlModel) PKValue() interface{} {
+	return s.ID
 }
 
 // PKPointer returns a pointer to primary key field for that record.
 // Returned interface{} value is never untyped nil.
-func (model *urlModel) PKPointer() interface{} {
-	return &model.ID
+func (s *urlModel) PKPointer() interface{} {
+	return &s.ID
 }
 
 // HasPK returns true if record has non-zero primary key set, false otherwise.
-func (model *urlModel) HasPK() bool {
-	return model.ID != urlModelTable.z[urlModelTable.s.PKFieldIndex]
+func (s *urlModel) HasPK() bool {
+	return s.ID != urlModelTable.z[urlModelTable.s.PKFieldIndex]
 }
 
 // SetPK sets record primary key, if possible.
 //
 // Deprecated: prefer direct field assignment where possible: s.ID = pk.
-func (model *urlModel) SetPK(pk interface{}) {
-	reform.SetPK(model, pk)
+func (s *urlModel) SetPK(pk interface{}) {
+	reform.SetPK(s, pk)
 }
 
 // check interfaces

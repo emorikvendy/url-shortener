@@ -30,7 +30,8 @@ type Config struct {
 }
 
 type Adapters struct {
-	URL datatypes.URLAdapter
+	URL   datatypes.URLAdapter
+	Stats datatypes.StatsAdapter
 }
 
 func New(logger *zap.SugaredLogger) (*R, error) {
@@ -50,9 +51,11 @@ func New(logger *zap.SugaredLogger) (*R, error) {
 
 	db := reform.NewDB(conn, postgresql.Dialect, reform.NewPrintfLogger(logger.Infof))
 	if conf.Source == "postgres" {
-		urlAdapter := postgres.New(db, conf.HashLen)
+		urlAdapter := postgres.NewURLAdapter(db, conf.HashLen)
+		stats := postgres.NewStatsAdapter(db)
 		adapters := Adapters{
-			URL: urlAdapter,
+			URL:   urlAdapter,
+			Stats: stats,
 		}
 
 		return &R{

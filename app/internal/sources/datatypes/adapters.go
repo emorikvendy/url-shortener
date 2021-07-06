@@ -11,3 +11,8 @@ type URLAdapter interface {
 	GetList(params map[string]interface{}) ([]dt.URL, error)
 	Delete(id int64) error
 }
+
+type StatsAdapter interface {
+	GetByURLID(id int64) (*dt.Stats, error)
+	AddByURLID(id int64) error
+}

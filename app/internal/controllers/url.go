@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/emorikvendy/url-shortener/internal/resources"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -25,7 +26,7 @@ func addURL(logger *zap.SugaredLogger, adapter sdt.URLAdapter) func(http.Respons
 			return
 		}
 
-		if !isURL(*urlItem.Link) {
+		if urlItem.Link == nil || !isURL(*urlItem.Link) {
 			dt.UnprocessableEntity(logger, "URL must be valid and contain schema and host", w)
 			logger.Infow("URL must be valid and contain schema and host", zap.Any("request", r.Body))
 			return
@@ -156,18 +157,24 @@ func updateURL(logger *zap.SugaredLogger, adapter sdt.URLAdapter) func(http.Resp
 	}
 }
 
-func redirect(logger *zap.SugaredLogger, adapter sdt.URLAdapter) func(http.ResponseWriter, *http.Request) {
+func redirect(logger *zap.SugaredLogger, urlAdapter sdt.URLAdapter, statsAdapter sdt.StatsAdapter) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 
-		urlItem, err := adapter.GetByHash(vars["hash"])
+		urlItem, err := urlAdapter.GetByHash(vars["hash"])
 		if err != nil {
 			dt.ResponseInternalError(logger, err.Error(), w)
-			logger.Errorw("Couldn't delete URL", zap.Any("request", r.Body), zap.String("err", err.Error()))
+			logger.Errorw("Couldn't find URL", zap.String("err", err.Error()))
 			return
 		}
 		if urlItem == nil {
 			dt.NotFound(logger, fmt.Sprintf("url with hash=%s was not found", vars["hash"]), w)
+			return
+		}
+		err = statsAdapter.AddByURLID(*urlItem.ID)
+		if err != nil {
+			dt.ResponseInternalError(logger, err.Error(), w)
+			logger.Errorw("Couldn't update stats", zap.String("err", err.Error()))
 			return
 		}
 		http.Redirect(w, r, *urlItem.Link, http.StatusTemporaryRedirect)
@@ -179,10 +186,11 @@ func isURL(str string) bool {
 	return err == nil && u.Scheme != "" && u.Host != ""
 }
 
-func AddURLRoutes(r *mux.Router, logger *zap.SugaredLogger, adapter sdt.URLAdapter, hashLen int) {
-	r.HandleFunc(fmt.Sprintf("/r/{hash:[0-9a-z]{%d}}", hashLen), redirect(logger, adapter)).Methods(http.MethodGet)
-	r.HandleFunc("/url", addURL(logger, adapter)).Methods(http.MethodPost)
-	r.HandleFunc("/url/{id:[0-9]+}", deleteURL(logger, adapter)).Methods(http.MethodDelete)
-	r.HandleFunc("/url/{id:[0-9]+}", updateURL(logger, adapter)).Methods(http.MethodPatch)
-	r.HandleFunc("/url/{id:[0-9]+}", getURL(logger, adapter)).Methods(http.MethodGet)
+func AddURLRoutes(r *mux.Router, logger *zap.SugaredLogger, adapters resources.Adapters, hashLen int) {
+	r.HandleFunc(fmt.Sprintf("/r/{hash:[0-9a-z]{%d}}", hashLen), redirect(logger, adapters.URL, adapters.Stats)).Methods(http.MethodGet)
+
+	r.HandleFunc("/url", addURL(logger, adapters.URL)).Methods(http.MethodPost)
+	r.HandleFunc("/url/{id:[0-9]+}", deleteURL(logger, adapters.URL)).Methods(http.MethodDelete)
+	r.HandleFunc("/url/{id:[0-9]+}", updateURL(logger, adapters.URL)).Methods(http.MethodPatch)
+	r.HandleFunc("/url/{id:[0-9]+}", getURL(logger, adapters.URL)).Methods(http.MethodGet)
 }
