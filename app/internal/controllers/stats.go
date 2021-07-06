@@ -2,11 +2,11 @@ package controllers
 
 import (
 	"encoding/json"
-	"github.com/emorikvendy/url-shortener/internal/resources"
 	"net/http"
 	"strconv"
 
 	dt "github.com/emorikvendy/url-shortener/internal/datatypes"
+	"github.com/emorikvendy/url-shortener/internal/resources"
 	sdt "github.com/emorikvendy/url-shortener/internal/sources/datatypes"
 
 	"github.com/gorilla/mux"

@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"fmt"
+
 	dt "github.com/emorikvendy/url-shortener/internal/datatypes"
 
 	"gopkg.in/reform.v1"
