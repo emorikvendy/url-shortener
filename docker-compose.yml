@@ -1,0 +1,65 @@
+version: "3"
+networks:
+  url-shortener:
+    external: true
+
+services:
+  url-shortener:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+      - 8081:8081
+    environment:
+      - DB_URL=postgres://url_shortener:url_shortener@postgres:5432/url_shortener?sslmode=disable
+      - PORT=8080
+      - DIAG_PORT=8081
+      - HASH_LEN=10
+      - DATA_SOURCE=postgres
+    depends_on:
+      - url-shortener-db
+      - flyway
+    networks:
+      - url-shortener
+
+  url-shortener-db:
+    image: postgres:13.3
+    hostname: postgres
+#    domainname: postgres
+#    volumes:
+#      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=url_shortener
+      - POSTGRES_PASSWORD=url_shortener
+      - POSTGRES_DB=url_shortener
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-U", "url_shortener"]
+      interval: 5s
+      timeout: 1s
+      retries: 2
+    networks:
+      - url-shortener
+
+  flyway:
+    image: boxfuse/flyway
+    command: -locations=filesystem:/flyway/sql -connectRetries=20 -url=jdbc:postgresql://postgres:5432/url_shortener -schemas=public -user=url_shortener -password=url_shortener migrate
+    volumes:
+      - ./db/migrations:/flyway/sql
+    depends_on:
+      - url-shortener-db
+    networks:
+      - url-shortener
+
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: url@shortener.test
+      PGADMIN_DEFAULT_PASSWORD: pgadmin
+    ports:
+      - 80:80
+    networks:
+      - url-shortener
