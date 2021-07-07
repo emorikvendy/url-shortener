@@ -12,7 +12,7 @@ services:
       - 8080:8080
       - 8081:8081
     environment:
-      - DB_URL=postgres://url_shortener:url_shortener@localhost:5432/url_shortener?sslmode=disable
+      - DB_URL=postgres://url_shortener:url_shortener@postgres:5432/url_shortener?sslmode=disable
       - PORT=8080
       - DIAG_PORT=8081
       - HASH_LEN=10
@@ -25,6 +25,7 @@ services:
 
   url-shortener-db:
     image: postgres:13.3
+    hostname: postgres
 #    domainname: postgres
 #    volumes:
 #      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -43,10 +44,10 @@ services:
       - url-shortener
 
   flyway:
-    image: boxfuse/flyway
-    command: -url=jdbc:postgresql://localhost:5432/url_shortener -user=url_shortener -password=url_shortener migrate
+    image: flyway/flyway
+    command: -locations=filesystem:/flyway/sql -connectRetries=20 -url=jdbc:postgresql://postgres:5432/url_shortener -schemas=public -user=url_shortener -password=url_shortener migrate
     volumes:
-      - ./db/migration:/flyway/sql
+      - ./db/migrations:/flyway/sql
     depends_on:
       - url-shortener-db
     networks:
