@@ -44,7 +44,7 @@ services:
       - url-shortener
 
   flyway:
-    image: flyway/flyway
+    image: boxfuse/flyway
     command: -locations=filesystem:/flyway/sql -connectRetries=20 -url=jdbc:postgresql://postgres:5432/url_shortener -schemas=public -user=url_shortener -password=url_shortener migrate
     volumes:
       - ./db/migrations:/flyway/sql
